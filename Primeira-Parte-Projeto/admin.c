@@ -316,3 +316,21 @@ void mergeSortDiscoAdmin(FILE *arq) {
 
     fflush(arq);
 }
+
+int validarAdmin(FILE *in){
+    int codigo = 0;
+    printf("Informe seu codigo de administrador: \n");
+    scanf("%d", &codigo);
+
+    rewind(in);
+    TAdmin *admin;
+    while ((admin = leAdmin(in)) != NULL) {
+        if(admin->id == codigo){
+            imprimeAdmin(admin);
+            free(admin);
+            return 0;
+        }
+    }
+    printf("Administrador nao cadastrado ou incorreto!\n");
+    return 1;
+}

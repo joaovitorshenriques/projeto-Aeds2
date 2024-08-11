@@ -33,3 +33,5 @@ void mergeAdmin(FILE *arq, int left, int mid, int right);
 void mergeSortAdmin(FILE *arq, int left, int right);
 
 void mergeSortDiscoAdmin(FILE *arq);
+
+int validarAdmin(FILE *in);
