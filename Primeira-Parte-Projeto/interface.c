@@ -13,7 +13,7 @@ void MSG_MENU( )
     printf("  \n\t3. Criar Admins");
     printf("  \n\t4. Imprimir Jogadores");
     printf("  \n\t5. Imprimir Clubes");
-    printf("  \n\t5. Imprimir Admins");
+    printf("  \n\t6. Imprimir Admins");
     printf("  \n\t7. Buscas Sequenciais");
     printf("  \n\t8. Ordenacao dos Arquivos");
     printf("  \n\t9. Buscas Binarias");

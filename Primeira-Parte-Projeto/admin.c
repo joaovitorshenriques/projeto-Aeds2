@@ -23,7 +23,7 @@ void salvaAdmin(TAdmin *admin, FILE *out){
 }
 
 void imprimeAdmin(TAdmin *admin) {
-    printf("\n***********************Administrador*******************************");
+    printf("\n----------------------Administrador----------------------");
     printf("\nCodigo: ");
     printf("%d", admin->id);
     printf("\nNome: ");
@@ -32,7 +32,7 @@ void imprimeAdmin(TAdmin *admin) {
     printf("%d", admin->cpf);
     printf("\nEmail: ");
     printf("%s", admin->email);
-    printf("\n*************************************************************\n");
+    printf("\n-----------------------\n");
 }
 
 void *leAdmin(FILE *out){
