@@ -33,7 +33,7 @@ void salvaAdmin(TAdmin *admin, FILE *out){
 }
 
 void imprimeAdmin(TAdmin *admin) {
-    printf("\n***********************admin*******************************");
+    printf("\n***********************Administrador*******************************");
     printf("\nCodigo: ");
     printf("%d", admin->id);
     printf("\nNome: ");
@@ -60,7 +60,7 @@ void *leAdmin(FILE *out){
 
 int insereMultiplosAdmins(FILE *out) {
     int contador = 0;
-    printf("Informe quantos olheiros deseja cadastrar: ");
+    printf("Informe quantos administradores deseja cadastrar: ");
     scanf("%d", &contador);
 
     srand(time(NULL));
@@ -96,7 +96,7 @@ int insereMultiplosAdmins(FILE *out) {
 }
 
 void *leAdminsEImprime(FILE *in) {
-    printf("\n\nLendo olheiros do arquivo...\n\n");
+    printf("\n\nLendo administradores do arquivo...\n\n");
     rewind(in);
     TAdmin *admin;
     while ((admin = leAdmin(in)) != NULL) {
@@ -125,7 +125,7 @@ TAdmin *buscaSequencialAdmin(int chave, FILE *in){
         contador ++;
         start = clock();
         if(admin->id == chave){
-          printf("admin Encontrado!\n");
+          printf("Administrador Encontrado!\n");
             imprimeAdmin(admin);
             achou = 1;
             break;
@@ -138,7 +138,7 @@ TAdmin *buscaSequencialAdmin(int chave, FILE *in){
     printf("\nTempo de execucao da busca: %.2f segundos\n", tempo);
     printf("Numero de comparacoes: %d\n", contador);
     } else {
-        printf("admin nao pertence a base de dados!...");
+        printf("Administrador nao pertence a base de dados!...");
         printf("\nNumero de comparacoes: %d\n", contador);
     }
 }
@@ -169,7 +169,7 @@ TAdmin *buscaBinariaAdmin(int chave, FILE *in, int inicio, int fim) {
     }
 
     if (cod == chave) {
-        printf("\nadmin Encontrado!\n");
+        printf("\nAdministrador Encontrado!\n");
         imprimeAdmin(admin);
         end = clock();
         double tempo = (double)(end - start) / CLOCKS_PER_SEC;
@@ -178,7 +178,7 @@ TAdmin *buscaBinariaAdmin(int chave, FILE *in, int inicio, int fim) {
         return admin;
     }
     else{
-        printf("admin nao pertence a base de dados!...\n");
+        printf("Administrador nao pertence a base de dados!...\n");
         printf("Numero de comparacoes: %d\n", contador);
         return NULL;
     }
