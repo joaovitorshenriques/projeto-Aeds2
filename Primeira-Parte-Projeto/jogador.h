@@ -39,3 +39,7 @@ void mergeJogador(FILE *arq, int left, int mid, int right);
 void mergeSortJogador(FILE *arq,int left,int right);
 
 void mergeSortDiscoJogador(FILE*arq);
+
+void pesquisarJogadoresPorClube(FILE *out);
+
+void transferenciaDeJogador(FILE *in, FILE * clube);

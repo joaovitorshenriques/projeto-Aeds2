@@ -425,3 +425,65 @@ void mergeSortDiscoJogador(FILE *arq) {
 
     fflush(arq);
 }
+
+void pesquisarJogadoresPorClube(FILE *out){
+    int contador = 0;
+    printf("Informe o codigo do clube que deseja visualizar os jogadores: ");
+    scanf("%d", &contador);
+
+    rewind(out);
+    TJogador *jogador;
+
+    while ((jogador = leJogador(out)) != NULL) {
+        if(jogador->clube.id == contador){
+            imprime(jogador);
+            free(jogador);
+        }
+    }
+}
+
+void transferenciaDeJogador(FILE *in, FILE * clube){
+    int contador = 0;
+    int flag = 0;
+    int codigoClube;
+    printf("Informe o codigo do jogador que deseja contratar: \n");
+    scanf("%d", &contador);
+
+    rewind(in);
+    TJogador *jogador;
+    while ((jogador = leJogador(in)) != NULL) {
+        if(jogador->id == contador){
+            imprime(jogador);
+
+            printf("Deseja realizar a contratacao do jogador?: \n");
+            printf("1 SIM\n");
+            printf("2 NAO\n");
+            scanf("%d", &flag);
+
+            if(flag == 1){
+                printf("Informe o codigo do clube para finalizar a contratacao do jogador: \n");
+                scanf("%d", &codigoClube);
+
+                TClube *clubeTransferencia = pesquisarClubePorCodigo(clube, codigoClube);
+
+                if(clubeTransferencia->id != -1){
+                    strcpy(jogador->clube.nome, clubeTransferencia->nome);
+                    jogador->clube.id = clubeTransferencia->id;
+                    printf("\n\n\t>>>>>>>>>>>>>>>>>>>>>>> JOGADOR TRANSFERIDO <<<<<<<<<<<<<<<<<<<<<<<<\n");
+                    imprime(jogador);
+                }
+
+                } else {
+                    printf("Clube nao encontrado, transacao cancelada! \n");
+                }
+                printf("Contratacao realizada com sucesso!\n");
+
+
+                return ;
+            } else if(flag == 2){
+                printf("Contratacao cancelada!\n");
+                return ;
+            }
+        }
+        printf("Jogador nao encontrado na base de dados\n");
+}
