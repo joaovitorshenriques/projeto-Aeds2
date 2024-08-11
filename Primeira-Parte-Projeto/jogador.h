@@ -33,3 +33,9 @@ TJogador *buscaBinariaJogador(int chave, FILE *in, int inicio, int fim);
 int tamanhoRegistroJogador();
 
 int tamanhoArquivoJogador(FILE *arq);
+
+void mergeJogador(FILE *arq, int left, int mid, int right);
+
+void mergeSortJogador(FILE *arq,int left,int right);
+
+void mergeSortDiscoJogador(FILE*arq);

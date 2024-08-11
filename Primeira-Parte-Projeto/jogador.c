@@ -294,3 +294,134 @@ int tamanhoArquivoJogador(FILE *arq) {
   int tam = trunc(ftell(arq) / tamanhoRegistroJogador());
   return tam;
 }
+
+void mergeJogador(FILE *arq, int left, int mid, int right){
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+
+    FILE *tempFile1 = fopen("temp1.dat", "wb+");
+    if (tempFile1 == NULL) {
+        perror("Erro ao abrir temp1.dat");
+        exit(1);
+    }
+    FILE *tempFile2 = fopen("temp2.dat", "wb+");
+    if (tempFile2 == NULL) {
+        perror("Erro ao abrir temp2.dat");
+        exit(1);
+    }
+
+    // Jogando os dados em arquivos temporários
+    for (int i = 0; i < n1; i++) {
+        fseek(arq, (left + i) * tamanhoRegistroJogador(), SEEK_SET);
+        TJogador *jogador = leJogador(arq);
+        if (jogador == NULL) {
+            perror("Erro ao ler jogador");
+            exit(1);
+        }
+        salvaJogador(jogador, tempFile1);
+        free(jogador);
+    }
+
+    for (int j = 0; j < n2; j++) {
+        fseek(arq, (mid + 1 + j) * tamanhoRegistroJogador(), SEEK_SET);
+        TJogador *jogador = leJogador(arq);
+        if (jogador == NULL) {
+            perror("Erro ao ler jogador");
+            exit(1);
+        }
+        salvaJogador(jogador, tempFile2);
+        free(jogador);
+    }
+
+    rewind(tempFile1);
+    rewind(tempFile2);
+
+    int i = 0, j = 0;
+    int k = left;
+
+    TJogador *jogador1 = leJogador(tempFile1);
+    TJogador *jogador2 = leJogador(tempFile2);
+
+    // Mesclando os arquivos de volta no arquivo original
+    while (i < n1 && j < n2) {
+        if (jogador1->id <= jogador2->id) {
+
+            fseek(arq, k * tamanhoRegistroJogador(), SEEK_SET);
+            salvaJogador(jogador1, arq);
+            i++;
+            if (i < n1) {
+                jogador1 = leJogador(tempFile1);
+            }
+        } else {
+
+            fseek(arq, k * tamanhoRegistroJogador(), SEEK_SET);
+            salvaJogador(jogador2, arq);
+            j++;
+            if (j < n2) {
+                jogador2 = leJogador(tempFile2);
+            }
+        }
+        k++;
+    }
+
+    // Copiando os elementos restantes de tempFile1, se houver
+    while (i < n1) {
+        fseek(arq, k * tamanhoRegistroJogador(), SEEK_SET);
+        salvaJogador(jogador1, arq);
+        i++;
+        if (i < n1) {
+            jogador1 = leJogador(tempFile1);
+        }
+        k++;
+    }
+
+    // Copiando os elementos restantes de tempFile2, se houver
+    while (j < n2) {
+        fseek(arq, k * tamanhoRegistroJogador(), SEEK_SET);
+        salvaJogador(jogador2, arq);
+        j++;
+        if (j < n2) {
+            jogador2 = leJogador(tempFile2);
+        }
+        k++;
+    }
+
+    fclose(tempFile1);
+    fclose(tempFile2);
+
+    if (remove("temp1.dat") != 0) {
+        perror("Erro ao remover temp1.dat");
+    }
+    if (remove("temp2.dat") != 0) {
+        perror("Erro ao remover temp2.dat");
+    }
+
+}
+
+// Função principal do Merge Sort
+void mergeSortJogador(FILE *arq, int left, int right) {
+
+
+    if (left < right) {
+        int mid = left + (right - left) / 2;
+
+        // Ordena a primeira metade
+        mergeSortJogador(arq, left, mid);
+
+        // Ordena a segunda metade
+        mergeSortJogador(arq, mid + 1, right);
+
+        // Mescla as duas metades
+        mergeJogador(arq, left, mid, right);
+    }
+
+}
+
+// Função a ser chamada
+void mergeSortDiscoJogador(FILE *arq) {
+    int tam = tamanhoArquivoJogador(arq);
+
+    mergeSortJogador(arq, 0, tam - 1);
+
+    fflush(arq);
+}

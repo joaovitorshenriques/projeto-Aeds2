@@ -26,3 +26,9 @@ int tamanhoArquivoClube(FILE *arq);
 TClube *buscaSequencialClube(int chave, FILE *in);
 
 TClube *buscaBinariaClube(int chave, FILE *in, int inicio, int fim);
+
+void mergeClube(FILE *arq, int left, int mid, int right);
+
+void mergeSortClube(FILE *arq, int left, int right);
+
+void mergeSortDiscoClube(FILE *arq);

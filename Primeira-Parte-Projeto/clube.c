@@ -144,3 +144,133 @@ TClube *buscaBinariaClube(int chave, FILE *in, int inicio, int fim) {
     free(clube);
 }
 
+void mergeClube(FILE *arq, int left, int mid, int right){
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+
+    FILE *tempFile1 = fopen("temp1.dat", "wb+");
+    if (tempFile1 == NULL) {
+        perror("Erro ao abrir temp1.dat");
+        exit(1);
+    }
+    FILE *tempFile2 = fopen("temp2.dat", "wb+");
+    if (tempFile2 == NULL) {
+        perror("Erro ao abrir temp2.dat");
+        exit(1);
+    }
+
+    // Jogando os dados em arquivos temporários
+    for (int i = 0; i < n1; i++) {
+        fseek(arq, (left + i) * tamanhoRegistroClube(), SEEK_SET);
+        TClube *clube = leClube(arq);
+        if (clube == NULL) {
+            perror("Erro ao ler Clube");
+            exit(1);
+        }
+        salvaClube(clube, tempFile1);
+        free(clube);
+    }
+
+    for (int j = 0; j < n2; j++) {
+        fseek(arq, (mid + 1 + j) * tamanhoRegistroClube(), SEEK_SET);
+        TClube *clube = leClube(arq);
+        if (clube == NULL) {
+            perror("Erro ao ler Clube");
+            exit(1);
+        }
+        salvaClube(clube, tempFile2);
+        free(clube);
+    }
+
+    rewind(tempFile1);
+    rewind(tempFile2);
+
+    int i = 0, j = 0;
+    int k = left;
+
+    TClube *clube1 = leClube(tempFile1);
+    TClube *clube2 = leClube(tempFile2);
+
+    // Mesclando os arquivos de volta no arquivo original
+    while (i < n1 && j < n2) {
+        if (clube1->id <= clube2->id) {
+
+            fseek(arq, k * tamanhoRegistroClube(), SEEK_SET);
+            salvaClube(clube1, arq);
+            i++;
+            if (i < n1) {
+                clube1 = leClube(tempFile1);
+            }
+        } else {
+
+            fseek(arq, k * tamanhoRegistroClube(), SEEK_SET);
+            salvaClube(clube2, arq);
+            j++;
+            if (j < n2) {
+                clube2 = leClube(tempFile2);
+            }
+        }
+        k++;
+    }
+
+    // Copiando os elementos restantes de tempFile1, se houver
+    while (i < n1) {
+        fseek(arq, k * tamanhoRegistroClube(), SEEK_SET);
+        salvaClube(clube1, arq);
+        i++;
+        if (i < n1) {
+            clube1 = leClube(tempFile1);
+        }
+        k++;
+    }
+
+    // Copiando os elementos restantes de tempFile2, se houver
+    while (j < n2) {
+        fseek(arq, k * tamanhoRegistroClube(), SEEK_SET);
+        salvaClube(clube2, arq);
+        j++;
+        if (j < n2) {
+            clube2 = leClube(tempFile2);
+        }
+        k++;
+    }
+
+    fclose(tempFile1);
+    fclose(tempFile2);
+
+    if (remove("temp1.dat") != 0) {
+        perror("Erro ao remover temp1.dat");
+    }
+    if (remove("temp2.dat") != 0) {
+        perror("Erro ao remover temp2.dat");
+    }
+
+}
+
+// Função principal do Merge Sort
+void mergeSortClube(FILE *arq, int left, int right) {
+
+
+    if (left < right) {
+        int mid = left + (right - left) / 2;
+
+        // Ordena a primeira metade
+        mergeSortClube(arq, left, mid);
+
+        // Ordena a segunda metade
+        mergeSortClube(arq, mid + 1, right);
+
+        // Mescla as duas metades
+        mergeClube(arq, left, mid, right);
+    }
+
+}
+
+// Função a ser chamada
+void mergeSortDiscoClube(FILE *arq) {
+    int tam = tamanhoArquivoClube(arq);
+
+    mergeSortClube(arq, 0, tam - 1);
+
+    fflush(arq);
+}

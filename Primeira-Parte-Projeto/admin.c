@@ -185,3 +185,134 @@ TAdmin *buscaBinariaAdmin(int chave, FILE *in, int inicio, int fim) {
 
     free(admin);
 }
+
+void mergeAdmin(FILE *arq, int left, int mid, int right){
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+
+    FILE *tempFile1 = fopen("temp1.dat", "wb+");
+    if (tempFile1 == NULL) {
+        perror("Erro ao abrir temp1.dat");
+        exit(1);
+    }
+    FILE *tempFile2 = fopen("temp2.dat", "wb+");
+    if (tempFile2 == NULL) {
+        perror("Erro ao abrir temp2.dat");
+        exit(1);
+    }
+
+    // Jogando os dados em arquivos temporários
+    for (int i = 0; i < n1; i++) {
+        fseek(arq, (left + i) * tamanhoRegistroAdmin(), SEEK_SET);
+        TAdmin *admin = leAdmin(arq);
+        if (admin == NULL) {
+            perror("Erro ao ler Admin");
+            exit(1);
+        }
+        salvaAdmin(admin, tempFile1);
+        free(admin);
+    }
+
+    for (int j = 0; j < n2; j++) {
+        fseek(arq, (mid + 1 + j) * tamanhoRegistroAdmin(), SEEK_SET);
+        TAdmin *admin = leAdmin(arq);
+        if (admin == NULL) {
+            perror("Erro ao ler Admin");
+            exit(1);
+        }
+        salvaAdmin(admin, tempFile2);
+        free(admin);
+    }
+
+    rewind(tempFile1);
+    rewind(tempFile2);
+
+    int i = 0, j = 0;
+    int k = left;
+
+    TAdmin *admin1 = leAdmin(tempFile1);
+    TAdmin *admin2 = leAdmin(tempFile2);
+
+    // Mesclando os arquivos de volta no arquivo original
+    while (i < n1 && j < n2) {
+        if (admin1->id <= admin2->id) {
+
+            fseek(arq, k * tamanhoRegistroAdmin(), SEEK_SET);
+            salvaAdmin(admin1, arq);
+            i++;
+            if (i < n1) {
+                admin1 = leAdmin(tempFile1);
+            }
+        } else {
+
+            fseek(arq, k * tamanhoRegistroAdmin(), SEEK_SET);
+            salvaAdmin(admin2, arq);
+            j++;
+            if (j < n2) {
+                admin2 = leAdmin(tempFile2);
+            }
+        }
+        k++;
+    }
+
+    // Copiando os elementos restantes de tempFile1, se houver
+    while (i < n1) {
+        fseek(arq, k * tamanhoRegistroAdmin(), SEEK_SET);
+        salvaAdmin(admin1, arq);
+        i++;
+        if (i < n1) {
+            admin1 = leAdmin(tempFile1);
+        }
+        k++;
+    }
+
+    // Copiando os elementos restantes de tempFile2, se houver
+    while (j < n2) {
+        fseek(arq, k * tamanhoRegistroAdmin(), SEEK_SET);
+        salvaAdmin(admin2, arq);
+        j++;
+        if (j < n2) {
+            admin2 = leAdmin(tempFile2);
+        }
+        k++;
+    }
+
+    fclose(tempFile1);
+    fclose(tempFile2);
+
+    if (remove("temp1.dat") != 0) {
+        perror("Erro ao remover temp1.dat");
+    }
+    if (remove("temp2.dat") != 0) {
+        perror("Erro ao remover temp2.dat");
+    }
+
+}
+
+// Função principal do Merge Sort
+void mergeSortAdmin(FILE *arq, int left, int right) {
+
+
+    if (left < right) {
+        int mid = left + (right - left) / 2;
+
+        // Ordena a primeira metade
+        mergeSortAdmin(arq, left, mid);
+
+        // Ordena a segunda metade
+        mergeSortAdmin(arq, mid + 1, right);
+
+        // Mescla as duas metades
+        mergeAdmin(arq, left, mid, right);
+    }
+
+}
+
+// Função a ser chamada
+void mergeSortDiscoAdmin(FILE *arq) {
+    int tam = tamanhoArquivoAdmin(arq);
+
+    mergeSortAdmin(arq, 0, tam - 1);
+
+    fflush(arq);
+}

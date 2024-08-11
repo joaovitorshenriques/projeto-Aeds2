@@ -27,3 +27,9 @@ int tamanhoArquivoAdmin(FILE *arq);
 TAdmin *buscaSequencialAdmin(int chave, FILE *in);
 
 TAdmin *buscaBinariaAdmin(int chave, FILE *in, int inicio, int fim);
+
+void mergeAdmin(FILE *arq, int left, int mid, int right);
+
+void mergeSortAdmin(FILE *arq, int left, int right);
+
+void mergeSortDiscoAdmin(FILE *arq);
