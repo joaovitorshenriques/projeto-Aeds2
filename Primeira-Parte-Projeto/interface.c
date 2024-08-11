@@ -133,6 +133,9 @@ void MENU(FILE*out,FILE *clube,FILE *admin){
             if(validacao == 0){
                 transferenciaDeJogador(out,clube);
             }
+            system("PAUSE");
+            break;
+
             case 12:
             system("cls");
             printf("\n\t Saindo do Modulo");
@@ -141,13 +144,8 @@ void MENU(FILE*out,FILE *clube,FILE *admin){
 
             default:
                 system("cls");
-                printf("\n\n\n\t >>>>>> MSG: Digite uma opcao valida!!! <<<<<<");
+                printf("\n\n\n\t ---------------------- MSG: Digite uma opcao valida!!! ----------------------");
                 system("PAUSE");
         }
     }while(opcao1 != 12);
-}
-
-
-void MENU(FILE*out,FILE *clube,FILE *admin){
-    
 }
