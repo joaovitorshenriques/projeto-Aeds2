@@ -35,12 +35,18 @@ void insereClubes(FILE *out){
     char *nomes[ ] = {"Botafogo","Flamengo","Fortaleza","Palmeiras","Cruzeiro","Sao Paulo","Bahia","CAP","Atletico-MG","Bragantino","Vasco","Criciuma","Juventude","Gremio","Vitoria","Internacional","Fluminense","Corinthians","Cuiaba","Atletico-GO"};
 
     int numClubes = sizeof(ids)/sizeof(ids[0]);
+    int qtdClubes;
 
-    for (int i = 0; i < numClubes; i++){
-        TClube*clube = criarClube(ids[i],nomes[i]);
-        salvaClube(clube,out);
-        free(clube);
-        fflush(out);
+    printf("Quantas vezes deseja criar o conjunto de 20 clubes: ");
+    scanf("%d",&qtdClubes);
+
+    for(int i = 0; i < qtdClubes; i++){
+        for (int j = 0; j < numClubes; j++){
+            TClube*clube = criarClube(ids[j],nomes[j]);
+            salvaClube(clube,out);
+            free(clube);
+            fflush(out);
+        }
     }
 }
 
