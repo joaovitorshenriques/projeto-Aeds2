@@ -19,31 +19,55 @@ void salvaClube(TClube *clube, FILE *out){
     fwrite(clube->nome, sizeof(char), sizeof(clube->nome), out);
 }
 
-void *leClube(FILE *out){
+void *leClube(FILE *in) {
     TClube *clube = (TClube *) malloc(sizeof(TClube));
-    if (0 >= fread(&clube->id, sizeof(int), 1, out)) {
+    if (clube == NULL) {
+        printf("Erro ao alocar memória para clube.\n");
+        return NULL;
+    }
+
+    size_t tamanhoRegistro = sizeof(clube->id) + sizeof(clube->nome); // Ajuste conforme a estrutura real de TClube
+
+    if (fread(clube, tamanhoRegistro, 1, in) != 1) {
         free(clube);
         return NULL;
     }
-    fread(clube->nome, sizeof(char), sizeof(clube->nome), out);
+
     return clube;
 }
 
-void insereClubes(FILE *out){
+void insereClubes(FILE *out) {
+    char *nomes[] = {
+        "Botafogo", "Flamengo", "Fortaleza", "Palmeiras", "Cruzeiro", "Sao Paulo",
+        "Bahia", "CAP", "Atletico-MG", "Bragantino", "Vasco", "Criciuma",
+        "Juventude", "Gremio", "Vitoria", "Internacional", "Fluminense",
+        "Corinthians", "Cuiaba", "Atletico-GO"
+    };
 
-    int ids [] = {4,11,9,1,15,10,2,3,7,17,5,20,13,6,16,12,19,8,14,18};
-    char *nomes[ ] = {"Botafogo","Flamengo","Fortaleza","Palmeiras","Cruzeiro","Sao Paulo","Bahia","CAP","Atletico-MG","Bragantino","Vasco","Criciuma","Juventude","Gremio","Vitoria","Internacional","Fluminense","Corinthians","Cuiaba","Atletico-GO"};
-
-    int numClubes = sizeof(ids)/sizeof(ids[0]);
+    int numClubes = sizeof(nomes) / sizeof(nomes[0]);
     int qtdClubes;
 
     printf("Quantas vezes deseja criar o conjunto de 20 clubes: ");
-    scanf("%d",&qtdClubes);
+    scanf("%d", &qtdClubes);
 
-    for(int i = 0; i < qtdClubes; i++){
-        for (int j = 0; j < numClubes; j++){
-            TClube*clube = criarClube(ids[j],nomes[j]);
-            salvaClube(clube,out);
+    srand(time(NULL));  // Inicializa a semente do gerador de números aleatórios
+
+    for (int i = 0; i < qtdClubes; i++) {
+        int ids[numClubes];
+
+        // Preenche o array de IDs com números sequenciais baseados no tamanho da lista
+        for (int j = 0; j < numClubes; j++) {
+            ids[j] = j + 1 + (i * numClubes);
+        }
+
+        // Embaralha e atribui IDs ao criar os clubes
+        for (int j = 0; j < numClubes; j++) {
+            int index = rand() % (numClubes - j);  // Seleciona um índice aleatório
+            int id = ids[index];                   // Pega o ID correspondente
+            ids[index] = ids[numClubes - j - 1];   // Substitui o ID usado pelo último ID não usado
+
+            TClube *clube = criarClube(id, nomes[j]);
+            salvaClube(clube, out);
             free(clube);
             fflush(out);
         }
@@ -74,10 +98,30 @@ int tamanhoRegistroClube(){
     + sizeof(char) * 100;
 }
 
-int tamanhoArquivoClube(FILE *arq){
-  fseek(arq, 0, SEEK_END);
-  int tam = trunc(ftell(arq) / tamanhoRegistroClube());
-  return tam;
+int tamanhoArquivoClube(FILE *arq) {
+    if (fseek(arq, 0, SEEK_END) != 0) {
+        printf("Erro ao posicionar o ponteiro do arquivo.\n");
+        return -1; // Indica erro
+    }
+
+    long tam = ftell(arq);
+    if (tam == -1L) {
+        printf("Erro ao obter a posição do ponteiro do arquivo.\n");
+        return -1; // Indica erro
+    }
+
+    if (fseek(arq, 0, SEEK_SET) != 0) {
+        printf("Erro ao reposicionar o ponteiro do arquivo.\n");
+        return -1; // Indica erro
+    }
+
+    int tamanhoRegistro = tamanhoRegistroClube(); // Função que retorna o tamanho do registro
+    if (tamanhoRegistro <= 0) {
+        printf("Tamanho do registro inválido.\n");
+        return -1; // Indica erro
+    }
+
+    return (int)(tam / tamanhoRegistro);
 }
 
 TClube *buscaSequencialClube(int chave, FILE *in){
@@ -286,7 +330,6 @@ void mergeSortDiscoClube(FILE *arq) {
 }
 
 TClube* pesquisarClubePorCodigo(FILE *in, int codigoClube){
-    int flag = 0;
 
     rewind(in);
     TClube *clube;
@@ -295,7 +338,7 @@ TClube* pesquisarClubePorCodigo(FILE *in, int codigoClube){
             imprimeClube(clube);
             return clube;
         }
+        free(clube);
     }
-    clube->id = -1;
-    return clube;
+    return NULL;
 }
