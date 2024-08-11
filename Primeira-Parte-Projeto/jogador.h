@@ -14,3 +14,14 @@ typedef struct Jogador{
     TClube clube;
 } TJogador;
 
+TJogador *criaJogador(int id, char *nome, char *posicao, int idade, double salario,double valorMercado, float score, char *contrato, TClube *clube);
+
+void salvaJogador(TJogador *jogador, FILE *out);
+
+TJogador *leJogador(FILE *out);
+
+void leJogadoresEImprime(FILE *in);
+
+int insereMultiplosJogadores(FILE *out);
+
+void leJogadoresEImprime(FILE *in);
