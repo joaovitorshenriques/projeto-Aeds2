@@ -15,16 +15,6 @@ TAdmin *criarAdmin(int id, int cpf, char *nome, char *email){
     return admin;
 }
 
-TAdmin *criarAdmin(int id, int cpf, char *nome, char *email){
-    TAdmin *admin = (TAdmin *) malloc(sizeof(TAdmin));
-    if (admin) memset(admin, 0, sizeof(TAdmin));
-    admin->id = id;
-    admin->cpf = cpf;
-    strcpy(admin->nome, nome);
-    strcpy(admin->email, email);
-    return admin;
-}
-
 void salvaAdmin(TAdmin *admin, FILE *out){
     fwrite(&admin->id, sizeof(int), 1, out);
     fwrite(&admin->cpf, sizeof(int), 1, out);

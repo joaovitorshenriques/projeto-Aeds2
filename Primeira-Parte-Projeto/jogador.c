@@ -446,48 +446,52 @@ void pesquisarJogadoresPorClube(FILE *out){
     }
 }
 
-void transferenciaDeJogador(FILE *in, FILE * clube){
+void transferenciaDeJogador(FILE *in, FILE *clube) {
     int contador = 0;
     int flag = 0;
     int codigoClube;
+
     printf("Informe o codigo do jogador que deseja contratar: \n");
     scanf("%d", &contador);
 
     rewind(in);
     TJogador *jogador;
     while ((jogador = leJogador(in)) != NULL) {
-        if(jogador->id == contador){
+        if (jogador->id == contador) {
             imprime(jogador);
 
-            printf("Deseja realizar a contratacao do jogador?: \n");
-            printf("1 SIM\n");
-            printf("2 NAO\n");
-            scanf("%d", &flag);
+            // Verifica se o jogador está livre no mercado ou se o contrato termina em 2024
+            if (strcmp(jogador->contrato, "Livre no Mercado") == 0 || strcmp(jogador->contrato, "Fim de 2024") == 0) {
+                printf("Deseja realizar a contratacao do jogador?: \n");
+                printf("1 SIM\n");
+                printf("2 NAO\n");
+                scanf("%d", &flag);
 
-            if(flag == 1){
-                printf("Informe o codigo do clube para finalizar a contratacao do jogador: \n");
-                scanf("%d", &codigoClube);
+                if (flag == 1) {
+                    printf("Informe o codigo do clube para finalizar a contratacao do jogador: \n");
+                    scanf("%d", &codigoClube);
 
-                TClube *clubeTransferencia = pesquisarClubePorCodigo(clube, codigoClube);
+                    TClube *clubeTransferencia = pesquisarClubePorCodigo(clube, codigoClube);
 
-                if(clubeTransferencia->id != -1){
-                    strcpy(jogador->clube.nome, clubeTransferencia->nome);
-                    jogador->clube.id = clubeTransferencia->id;
-                    printf("\n\n\t>>>>>>>>>>>>>>>>>>>>>>> JOGADOR TRANSFERIDO <<<<<<<<<<<<<<<<<<<<<<<<\n");
-                    imprime(jogador);
+                    if (clubeTransferencia != NULL && clubeTransferencia->id != -1) {
+                        strcpy(jogador->clube.nome, clubeTransferencia->nome);
+                        jogador->clube.id = clubeTransferencia->id;
+                        printf("\n\n\t---------------------- Jogador transferido ----------------------\n");
+                        imprime(jogador);
+                        printf("Contratacao realizada com sucesso!\n");
+                    } else {
+                        printf("Clube nao encontrado, transacao cancelada!\n");
+                    }
+                    return;
+                } else if (flag == 2) {
+                    printf("Contratacao cancelada!\n");
+                    return;
                 }
-
-                } else {
-                    printf("Clube nao encontrado, transacao cancelada! \n");
-                }
-                printf("Contratacao realizada com sucesso!\n");
-
-
-                return ;
-            } else if(flag == 2){
-                printf("Contratacao cancelada!\n");
-                return ;
+            } else {
+                printf("Jogador nao pode ser contratado. Contrato vigente ate %s.\n", jogador->contrato);
+                return;
             }
         }
-        printf("Jogador nao encontrado na base de dados\n");
+    }
+    printf("Jogador nao encontrado na base de dados\n");
 }
