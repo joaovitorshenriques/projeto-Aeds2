@@ -274,3 +274,18 @@ void mergeSortDiscoClube(FILE *arq) {
 
     fflush(arq);
 }
+
+TClube* pesquisarClubePorCodigo(FILE *in, int codigoClube){
+    int flag = 0;
+
+    rewind(in);
+    TClube *clube;
+    while ((clube = leClube(in)) != NULL){
+        if(clube->id == codigoClube){
+            imprimeClube(clube);
+            return clube;
+        }
+    }
+    clube->id = -1;
+    return clube;
+}

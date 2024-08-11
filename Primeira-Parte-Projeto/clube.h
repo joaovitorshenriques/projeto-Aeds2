@@ -32,3 +32,5 @@ void mergeClube(FILE *arq, int left, int mid, int right);
 void mergeSortClube(FILE *arq, int left, int right);
 
 void mergeSortDiscoClube(FILE *arq);
+
+TClube* pesquisarClubePorCodigo(FILE *in, int codigoClube);
