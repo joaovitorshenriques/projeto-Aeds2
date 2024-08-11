@@ -18,3 +18,11 @@ void insereClubes(FILE *out);
 void imprimeClube(TClube *clube);
 
 void leClubesEImprime(FILE *in);
+
+int tamanhoRegistroClube();
+
+int tamanhoArquivoClube(FILE *arq);
+
+TClube *buscaSequencialClube(int chave, FILE *in);
+
+TClube *buscaBinariaClube(int chave, FILE *in, int inicio, int fim);

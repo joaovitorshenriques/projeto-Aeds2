@@ -104,3 +104,84 @@ void *leAdminsEImprime(FILE *in) {
         free(admin);
     }
 }
+
+int tamanhoRegistroAdmin() {
+    return sizeof(int) + sizeof(int) + sizeof(char) * 100 + sizeof(char) * 200;
+}
+
+int tamanhoArquivoAdmin(FILE *arq) {
+  fseek(arq, 0, SEEK_END);
+  int tam = trunc(ftell(arq) / tamanhoRegistroAdmin());
+  return tam;
+}
+
+TAdmin *buscaSequencialAdmin(int chave, FILE *in){
+
+    TAdmin *admin;
+    int achou,contador = 0;
+    rewind(in);
+    clock_t start, end;
+    while ((admin = leAdmin(in)) != NULL){
+        contador ++;
+        start = clock();
+        if(admin->id == chave){
+          printf("admin Encontrado!\n");
+            imprimeAdmin(admin);
+            achou = 1;
+            break;
+        }
+    }
+    free(admin);
+    end = clock();
+    double tempo = (double)(end- start) / CLOCKS_PER_SEC;
+    if(achou){
+    printf("\nTempo de execucao da busca: %.2f segundos\n", tempo);
+    printf("Numero de comparacoes: %d\n", contador);
+    } else {
+        printf("admin nao pertence a base de dados!...");
+        printf("\nNumero de comparacoes: %d\n", contador);
+    }
+}
+
+
+TAdmin *buscaBinariaAdmin(int chave, FILE *in, int inicio, int fim) {
+
+    TAdmin *admin = NULL;
+    int cod = -1;
+    int contador = 0;
+    clock_t start,end;
+
+    start = clock();
+    while (inicio <= fim && cod != chave) {
+
+        int meio = (inicio + fim) / 2;
+        fseek(in,meio* tamanhoRegistroAdmin(),SEEK_SET);
+        admin= leAdmin(in);
+        cod = admin->id;
+
+        if (admin) {
+            if (cod > chave) {
+                fim = meio - 1;
+            } else {
+                inicio = meio + 1;
+            }
+        }
+    }
+
+    if (cod == chave) {
+        printf("\nadmin Encontrado!\n");
+        imprimeAdmin(admin);
+        end = clock();
+        double tempo = (double)(end - start) / CLOCKS_PER_SEC;
+        printf("\nTempo de execucao: %.2f segundos\n", tempo);
+        printf("Numero de comparacoes: %d\n", contador);
+        return admin;
+    }
+    else{
+        printf("admin nao pertence a base de dados!...\n");
+        printf("Numero de comparacoes: %d\n", contador);
+        return NULL;
+    }
+
+    free(admin);
+}

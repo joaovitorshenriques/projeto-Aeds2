@@ -62,3 +62,85 @@ void imprimeClube(TClube *clube){
     printf("%s", clube->nome);
     printf("\n-------------------------------\n");
 }
+
+int tamanhoRegistroClube(){
+    return sizeof(int)
+    + sizeof(char) * 100;
+}
+
+int tamanhoArquivoClube(FILE *arq){
+  fseek(arq, 0, SEEK_END);
+  int tam = trunc(ftell(arq) / tamanhoRegistroClube());
+  return tam;
+}
+
+TClube *buscaSequencialClube(int chave, FILE *in){
+
+    TClube *clube;
+    int achou,contador = 0;
+    rewind(in);
+    clock_t start, end;
+    while ((clube = leClube(in)) != NULL){
+        contador ++;
+        start = clock();
+        if(clube->id == chave){
+          printf("Clube Encontrado!\n");
+            imprimeClube(clube);
+            achou = 1;
+            break;
+        }
+    }
+    free(clube);
+    end = clock();
+    double tempo = (double)(end- start) / CLOCKS_PER_SEC;
+    if(achou){
+    printf("\nTempo de execucao da busca: %.2f segundos\n", tempo);
+    printf("Numero de comparacoes: %d\n", contador);
+    } else {
+        printf("Clube nao pertence a base de dados!...");
+        printf("\nNumero de comparacoes: %d\n", contador);
+    }
+}
+
+TClube *buscaBinariaClube(int chave, FILE *in, int inicio, int fim) {
+
+    TClube *clube = NULL;
+    int cod = -1;
+    int contador = 0;
+    clock_t start,end;
+
+    start = clock();
+    while (inicio <= fim && cod != chave) {
+
+        int meio = (inicio + fim) / 2;
+        fseek(in,meio* tamanhoRegistroClube(),SEEK_SET);
+        clube= leClube(in);
+        cod = clube->id;
+
+        if (clube) {
+            if (cod > chave) {
+                fim = meio - 1;
+            } else {
+                inicio = meio + 1;
+            }
+        }
+    }
+
+    if (cod == chave) {
+        printf("\nClube Encontrado!\n");
+        imprimeClube(clube);
+        end = clock();
+        double tempo = (double)(end - start) / CLOCKS_PER_SEC;
+        printf("\nTempo de execucao: %.2f segundos\n", tempo);
+        printf("Numero de comparacoes: %d\n", contador);
+        return clube;
+    }
+    else{
+        printf("Clube nao pertence a base de dados!...\n");
+        printf("Numero de comparacoes: %d\n", contador);
+        return NULL;
+    }
+
+    free(clube);
+}
+

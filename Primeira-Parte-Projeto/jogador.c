@@ -211,3 +211,86 @@ int insereMultiplosJogadores(FILE *out){
     }
 
 }
+
+TJogador *buscaSequencialJogador(int chave, FILE *in){
+
+    TJogador *jogador;
+    int achou,contador = 0;
+    rewind(in);
+    clock_t start, end;
+    while ((jogador = leJogador(in)) != NULL){
+        contador ++;
+        start = clock();
+        if(jogador->id == chave){
+          printf("Jogador Encontrado!\n");
+            imprime(jogador);
+            achou = 1;
+            break;
+        }
+    }
+    free(jogador);
+    end = clock();
+    double tempo = (double)(end- start) / CLOCKS_PER_SEC;
+    if(achou){
+    printf("\nTempo de execucao da busca: %.2f segundos\n", tempo);
+    printf("Numero de comparacoes: %d\n", contador);
+    } else {
+        printf("Jogador nao pertence a base de dados!...");
+        printf("\nNumero de comparacoes: %d\n", contador);
+    }
+}
+
+TJogador *buscaBinariaJogador(int chave, FILE *in, int inicio, int fim) {
+
+    TJogador *jogador = NULL;
+    int cod = -1;
+    int contador = 0;
+    clock_t start,end;
+
+    start = clock();
+    while (inicio <= fim && cod != chave) {
+
+        int meio = (inicio + fim) / 2;
+        fseek(in,meio* tamanhoRegistroJogador(),SEEK_SET);
+        jogador= leJogador(in);
+        cod = jogador->id;
+
+        if (jogador) {
+            if (cod > chave) {
+                fim = meio - 1;
+            } else {
+                inicio = meio + 1;
+            }
+        }
+    }
+
+    if (cod == chave) {
+        printf("\nJogador Encontrado!\n");
+        imprime(jogador);
+        end = clock();
+        double tempo = (double)(end - start) / CLOCKS_PER_SEC;
+        printf("\nTempo de execucao: %.2f segundos\n", tempo);
+        printf("Numero de comparacoes: %d\n", contador);
+        return jogador;
+    }
+    else{
+        printf("Jogador nao pertence a base de dados!...\n");
+        printf("Numero de comparacoes: %d\n", contador);
+        return NULL;
+    }
+
+    free(jogador);
+}
+
+
+
+int tamanhoRegistroJogador() {
+    return sizeof(int) + sizeof(char) * 100 + sizeof(char) * 50 + sizeof(int)
+    + sizeof(double) * 2 + sizeof(float) + sizeof(char) * 100 + sizeof(TClube);
+}
+
+int tamanhoArquivoJogador(FILE *arq) {
+  fseek(arq, 0, SEEK_END);
+  int tam = trunc(ftell(arq) / tamanhoRegistroJogador());
+  return tam;
+}

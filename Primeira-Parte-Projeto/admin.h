@@ -19,3 +19,11 @@ void *leAdmin(FILE *out);
 int insereMultiplosAdmins(FILE *out);
 
 void *leAdminsEImprime(FILE *in);
+
+int tamanhoRegistroAdmin();
+
+int tamanhoArquivoAdmin(FILE *arq);
+
+TAdmin *buscaSequencialAdmin(int chave, FILE *in);
+
+TAdmin *buscaBinariaAdmin(int chave, FILE *in, int inicio, int fim);

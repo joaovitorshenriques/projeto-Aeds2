@@ -25,3 +25,11 @@ void leJogadoresEImprime(FILE *in);
 int insereMultiplosJogadores(FILE *out);
 
 void leJogadoresEImprime(FILE *in);
+
+TJogador *buscaSequencialJogador(int chave, FILE *in);
+
+TJogador *buscaBinariaJogador(int chave, FILE *in, int inicio, int fim);
+
+int tamanhoRegistroJogador();
+
+int tamanhoArquivoJogador(FILE *arq);
