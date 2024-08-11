@@ -22,6 +22,8 @@ TJogador *leJogador(FILE *out);
 
 void leJogadoresEImprime(FILE *in);
 
+void embaralhar(int *array, int tamanho);
+
 int insereMultiplosJogadores(FILE *out);
 
 void leJogadoresEImprime(FILE *in);

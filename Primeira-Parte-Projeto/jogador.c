@@ -92,125 +92,103 @@ void leJogadoresEImprime(FILE *in) {
         free(f);
     }
 }
+// Função para embaralhar um array
+void embaralhar(int *array, int tamanho) {
+    for (int i = tamanho - 1; i > 0; i--) {
+        int j = rand() % (i + 1);
+        int temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
 
-int insereMultiplosJogadores(FILE *out){
-
+int insereMultiplosJogadores(FILE *out) {
     int contador = 0;
     printf("Informe quantos jogadores deseja inserir: ");
-    scanf("%d",&contador);
+    scanf("%d", &contador);
+
+    if (contador <= 0) {
+        printf("Número de jogadores deve ser maior que zero.\n");
+        return 1;
+    }
 
     srand(time(NULL));
 
-    int *numeros = malloc(contador*sizeof(int));
+    int *numeros = malloc(contador * sizeof(int));
+    if (numeros == NULL) {
+        printf("Erro ao alocar memória para números.\n");
+        return 1;
+    }
 
-    for(int i = 0; i < contador; i++){
+    for (int i = 0; i < contador; i++) {
         numeros[i] = i + 1;
     }
 
-    //Embaralha os números
-    for(int i = contador - 1; i > 0; i--){
-        int j = rand()%(i+1);
-        int temp = numeros[i];
-        numeros[i] = numeros[j];
-        numeros[j] = temp;
+    embaralhar(numeros, contador);
+
+    // Carregando clubes do arquivo
+    FILE *clubesFileRead = fopen("clubes.dat", "rb");
+    if (clubesFileRead == NULL) {
+        printf("Erro ao abrir arquivo para leitura de clubes.\n");
+        free(numeros);
+        return 1;
     }
+
+    int numClubes = tamanhoArquivoClube(clubesFileRead);
+    if (numClubes <= 0) {
+        printf("Nenhum clube encontrado no arquivo.\n");
+        free(numeros);
+        fclose(clubesFileRead);
+        return 1;
+    }
+
+    TClube *clubes[numClubes];
+
+    for (int i = 0; i < numClubes; i++) {
+        clubes[i] = (TClube *)leClube(clubesFileRead);
+        if (clubes[i] == NULL) {
+            printf("Erro ao ler clube %d do arquivo.\n", i + 1);
+            for (int j = 0; j < i; j++) {
+                free(clubes[j]);
+            }
+            free(numeros);
+            fclose(clubesFileRead);
+            return 1;
+        }
+    }
+    fclose(clubesFileRead);
 
     int x = 0;
-    for(int i = 0; i < contador; i = i + 10){
-        TClube *clube1 = criarClube(4,"Botafogo");
-        TClube *clube2 = criarClube(11,"Flamengo");
-        TClube *clube3 = criarClube(9,"Fortaleza");
-        TClube *clube4 = criarClube(1,"Palmeiras");
-        TClube *clube5 = criarClube(15,"Cruzeiro");
-        TClube *clube6 = criarClube(10,"São Paulo");
-        TClube *clube7 = criarClube(2,"Bahia");
-        TClube *clube8 = criarClube(3,"CAP");
-        TClube *clube9 = criarClube(7,"Atletico-MG");
-        TClube *clube10 = criarClube(17,"Bragantino");
-        TClube *clube11 = criarClube(5,"Vasco");
-        TClube *clube12 = criarClube(20,"Criciuma");
-        TClube *clube13 = criarClube(13,"Juventude");
-        TClube *clube14 = criarClube(6,"Gremio");
-        TClube *clube15 = criarClube(16,"Vitoria");
-        TClube *clube16 = criarClube(12,"Internacional");
-        TClube *clube17 = criarClube(19,"Fluminense");
-        TClube *clube18 = criarClube(8,"Corithians");
-        TClube *clube19 = criarClube(14,"Cuiaba");
-        TClube *clube20 = criarClube(18,"Atletico-GO");
-        TClube *clube21 = criarClube(0,"");
+    for (int i = 0; i < contador; i++) {
+        TClube *clube = clubes[rand() % numClubes];
+        if (clube == NULL) {
+            printf("Erro: Clube selecionado é NULL.\n");
+            continue;
+        }
 
-        if(x<contador){
-        TJogador *jogador1 = criaJogador(numeros[x],"Joao","Goleiro",24,37000,190000,7.3,"Livre no Mercado",clube7);
+        TJogador *jogador = criaJogador(
+            numeros[x], "Jogador", "Posicao", 25, 35000, 150000, 7.0, "Contrato", clube
+        );
+        if (jogador == NULL) {
+            printf("Erro ao criar jogador com número %d\n", numeros[x]);
+            continue;
+        }
         x++;
-        salvaJogador(jogador1,out);
-        free(jogador1);
-        }
-
-        if(x<contador){
-        TJogador *jogador2 = criaJogador(numeros[x],"Junnyor","Zagueiro",30,35000,189000,7.5,"Contrato ate 2025",clube5);
-        x++;
-        salvaJogador(jogador2,out);
-        free(jogador2);
-        }
-
-        if(x<contador){
-        TJogador *jogador3 = criaJogador(numeros[x],"Lucas","Atacante",22,42000,220000,8.0,"Contrato ate 2025",clube1);
-         x++;
-        salvaJogador(jogador3,out);
-        free(jogador3);
-        }
-
-        if(x<contador){
-        TJogador *jogador4 = criaJogador(numeros[x],"Amaral","Lateral-Direito",21,32500,190000,6.2,"Fim de 2024",clube10);
-         x++;
-        salvaJogador(jogador4,out);
-        free(jogador4);
-        }
-
-        if(x<contador){
-        TJogador *jogador5 = criaJogador(numeros[x],"Athus","Lateral-Esquerdo",20,39000,192000,4.5,"Contrato ate 2026",clube20);
-         x++;
-        salvaJogador(jogador5,out);
-        free(jogador5);
-        }
-
-        if(x<contador){
-        TJogador *jogador6 = criaJogador(numeros[x],"Mayke","Meio-Campo",21,40000,21000,5.5,"Livre no mercado",clube21);
-         x++;
-        salvaJogador(jogador6,out);
-        free(jogador6);
-        }
-
-        if(x<contador){
-        TJogador *jogador7 = criaJogador(numeros[x],"Richardy","Volante",21,33000,195000,7.2,"Fim de 2024",clube14);
-         x++;
-        salvaJogador(jogador7,out);
-        free(jogador7);
-        }
-
-        if(x<contador){
-        TJogador *jogador8 = criaJogador(numeros[x],"Emerson","Zagueiro",26,34000,178000,5.6,"Livre no mercado",clube21);
-         x++;
-        salvaJogador(jogador8,out);
-        free(jogador8);
-        }
-
-        if(x<contador){
-        TJogador *jogador9 = criaJogador(numeros[x],"Leonardo","Goleiro",23,39000,192000,6.8,"Contrato ate 2025",clube12);
-         x++;
-        salvaJogador(jogador9,out);
-        free(jogador9);
-        }
-
-        if(x<contador){
-        TJogador *jogador10 = criaJogador(numeros[x],"Mateus","Atacante",24,43000,215000,6.7,"Contrato ate 2026",clube19);
-         x++;
-        salvaJogador(jogador10,out);
-        free(jogador10);
-        }
+        salvaJogador(jogador, out);
+        free(jogador);
     }
 
+    // Libera a memória alocada para os clubes
+    for (int i = 0; i < numClubes; i++) {
+        free(clubes[i]);
+    }
+    free(numeros);
+
+    return 0;
 }
+
+
+
 
 TJogador *buscaSequencialJogador(int chave, FILE *in){
 
@@ -460,8 +438,6 @@ void transferenciaDeJogador(FILE *in, FILE *clube) {
         if (jogador->id == contador) {
             imprime(jogador);
 
-            // Verifica se o jogador está livre no mercado ou se o contrato termina em 2024
-            if (strcmp(jogador->contrato, "Livre no Mercado") == 0 || strcmp(jogador->contrato, "Fim de 2024") == 0) {
                 printf("Deseja realizar a contratacao do jogador?: \n");
                 printf("1 SIM\n");
                 printf("2 NAO\n");
@@ -487,11 +463,7 @@ void transferenciaDeJogador(FILE *in, FILE *clube) {
                     printf("Contratacao cancelada!\n");
                     return;
                 }
-            } else {
-                printf("Jogador nao pode ser contratado. Contrato vigente ate %s.\n", jogador->contrato);
-                return;
             }
         }
+        printf("Jogador nao encontrado na base de dados\n");
     }
-    printf("Jogador nao encontrado na base de dados\n");
-}
