@@ -310,11 +310,15 @@ void mergeSortAdmin(FILE *arq, int left, int right) {
 
 // Função a ser chamada
 void mergeSortDiscoAdmin(FILE *arq) {
+    clock_t start,end;
+    start = clock();
     int tam = tamanhoArquivoAdmin(arq);
 
     mergeSortAdmin(arq, 0, tam - 1);
-
     fflush(arq);
+    end = clock();
+    double tempo = (double)(end - start) / CLOCKS_PER_SEC;
+    printf("\nTempo de ordenacao: %.2f segundos\n", tempo);
 }
 
 int validarAdmin(FILE *in){

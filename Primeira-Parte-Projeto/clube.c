@@ -268,11 +268,15 @@ void mergeSortClube(FILE *arq, int left, int right) {
 
 // Função a ser chamada
 void mergeSortDiscoClube(FILE *arq) {
+    clock_t start,end;
+    start = clock();
     int tam = tamanhoArquivoClube(arq);
 
     mergeSortClube(arq, 0, tam - 1);
-
     fflush(arq);
+    end = clock();
+    double tempo = (double)(end - start) / CLOCKS_PER_SEC;
+    printf("\nTempo de ordenacao: %.2f segundos\n", tempo);
 }
 
 TClube* pesquisarClubePorCodigo(FILE *in, int codigoClube){

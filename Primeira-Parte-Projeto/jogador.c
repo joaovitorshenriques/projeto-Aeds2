@@ -419,11 +419,15 @@ void mergeSortJogador(FILE *arq, int left, int right) {
 
 // Função a ser chamada
 void mergeSortDiscoJogador(FILE *arq) {
+    clock_t start,end;
+    start = clock();
     int tam = tamanhoArquivoJogador(arq);
 
     mergeSortJogador(arq, 0, tam - 1);
-
     fflush(arq);
+    end = clock();
+    double tempo = (double)(end - start) / CLOCKS_PER_SEC;
+    printf("\nTempo de ordenacao: %.2f segundos\n", tempo);
 }
 
 void pesquisarJogadoresPorClube(FILE *out){
