@@ -484,3 +484,21 @@ void transferenciaDeJogador(FILE *in, FILE *clube) {
             return 0;
         }
     }
+
+    int tamanhoArquivoParticao(FILE *file) {
+    int contSizeFile = 0;
+    int bytesAUX = 0;
+
+    while (1) {
+        fseek(file, bytesAUX * sizeof(TJogador), SEEK_SET);
+        TJogador *j = leJogador(file);
+        if (j == NULL) {
+            break;
+        }
+        free(j);
+        contSizeFile++;
+        bytesAUX++;
+    }
+
+    return contSizeFile;
+}
