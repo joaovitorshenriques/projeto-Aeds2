@@ -468,7 +468,7 @@ void transferenciaDeJogador(FILE *in, FILE *clube) {
         printf("Jogador nao encontrado na base de dados\n");
     }
 
-    int registroMemoria (int vet[6]) {
+int registroMemoria (int vet[6]) {
 
         int cont = 0;
 
@@ -483,9 +483,9 @@ void transferenciaDeJogador(FILE *in, FILE *clube) {
         } else {
             return 0;
         }
-    }
+}
 
-    int tamanhoArquivoParticao(FILE *file) {
+int tamanhoArquivoParticao(FILE *file) {
     int contSizeFile = 0;
     int bytesAUX = 0;
 
@@ -501,4 +501,24 @@ void transferenciaDeJogador(FILE *in, FILE *clube) {
     }
 
     return contSizeFile;
+}
+
+void imprimeParticoes(FILE *file, char nomeParticao[]) {
+    printf("PARTICAO: %s \n\n", nomeParticao);
+
+    int totalPlayers = tamanhoArquivoParticao(file);
+
+    for (int i = 0; i < totalPlayers; ++i) {
+        fseek(file, i * tamanhoRegistroJogador(), SEEK_SET);
+        TJogador *j = leJogador(file);
+
+        if (j != NULL) {
+            printf("%d ", j->id);
+            free(j); // Liberar a mem�ria alocada por le()
+        }
+    }
+
+    printf("\n");
+    printf("\n**********************************************************************************************\n");
+
 }
